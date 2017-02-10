@@ -1,0 +1,62 @@
+#!/bin/bash
+
+configFile="$HOME/.bookmark.conf.yaml"
+storeDirectory=$(grep "storeDirectory" $configFile | awk -F": " '{ print $2 }')
+os=$(grep "os" $configFile | awk -F": " '{ print $2 }')
+
+open=0
+view=0
+list=0
+pass=0
+
+while getopts b:lopv o
+do
+  case "$o" in
+    b) bookmark="$storeDirectory/${OPTARG}.yaml"
+    url=$(grep "url" $bookmark | awk -F": " '{ print $2 }')
+    ;;
+    l) list=1;;
+    o) open=1;;
+    p) pass=1;;
+    v) view=1;;
+  esac
+done
+
+# Opens URL in browser specified in the config file or in the bookmark file
+if [[ $open -eq 1 ]]
+then
+  browser=$(sed -n -e "/browser/,/  $os/p" $bookmark | grep "$os" | awk -F ": " '{ print $2 }')
+# browser=$(grep "browser" $bookmark | awk -F": " '{ print $2 }')
+  # Check to use default browser
+  if [ "$browser" == "" ]
+  then
+    browser=$(grep "browser" $configFile | awk -F": " '{ print $2 }')
+  fi
+  
+  if [[ "$os" == "macos" ]]
+  then
+    open -a "$browser" $url 
+  fi
+fi
+
+# Send url to stdout
+if [[ $view == 1 ]]
+then
+  echo $url
+fi
+
+if [[ $pass -eq 1 ]]
+then
+  password=$(grep "pass" $bookmark | awk -F": " '{ print $2 }' | sed "s/\'//g")
+  if [[ $password == "" ]]
+  then
+    echo "No password path has been assigned in the file."
+  else
+    pass -c "$password"
+  fi
+fi
+
+if [[ $list -eq 1 ]]
+then
+  tree $storeDirectory | sed "s/.yaml//g" | sed '$ d' | sed '$ d'
+fi
