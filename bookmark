@@ -64,6 +64,7 @@ view=0
 list=0
 pass=0
 
+# Check if pass is available
 if [[ "$(grep pass $configFile | awk -F": " '{ print $2 }')" == "installed" ]]
 then
   passInstalled=1
@@ -76,11 +77,46 @@ else
   fi
 fi
 
-while getopts b:hlopv o
+while getopts b:c:hlopv o
 do
   case "$o" in
     b) bookmark="$storeDirectory/${OPTARG}.yaml"
     url=$(grep "url" $bookmark | awk -F": " '{ print $2 }')
+    ;;
+    c) newBookmarkArg="${OPTARG}"
+    newBookmark="$(echo $newBookmarkArg | awk -F"/" '{ print $NF }').yaml" 
+    newBookmarkPathArr=($(echo $newBookmarkArg | sed 's/\// /g'))
+    unset 'newBookmarkPathArr[${#newBookmarkPathArr[@]}-1]'
+    currentPath=$storeDirectory
+    for i in ${newBookmarkPathArr[@]}
+    do
+      if [ ! -d "$currentPath/$i" ]
+      then
+        mkdir $currentPath/$i
+      fi
+      currentPath="$currentPath/$i"
+    done
+    echo -n "url: "
+    read newURL
+    echo "url: $newURL" > $currentPath/$newBookmark
+    echo -n "browser: "
+    read newBrowser
+    if [[ "newBrowser" != "" ]]
+    then
+      echo "browser: $newBrowser" >> $currentPath/$newBookmark
+    fi
+    if [[ $passInstalled -eq 1 ]]
+    then
+      echo -n "pass path: "
+      read newPass
+      if [[ "$newPass" != "" ]]
+      then
+        echo "pass: $newPass" >> $cureentPath/$newBookmark
+      fi
+    fi
+    echo -e "$newURL\n$newBrowser\n$newPass" > $currentPath/$newBookmark
+    echo "Added $currentPath/$newBookmark to the bookmark store"
+    exit 0
     ;;
     h) echo -e "bookmark, version 0.1\n\nusage: bookmark [-b bookmark path] [-hlopv]\n\n  h : Displays this help section\n  l : Shows a tree of all bookmarks in the store.\n  o : Open the bookmark in the browser specified in the bookmakr YAML file or the default browser if that is not set.\n  p : If pass is installed and the path to the pass file for this site is in the bookmark YAML file, this will copy the password.\n  v : View the url\n" 
     ;;
