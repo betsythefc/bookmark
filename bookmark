@@ -1,5 +1,60 @@
 #!/bin/bash
 
+# Setup bookmark folder and config file
+if [[ "$1" == "init" ]]
+then
+  if [ -d $HOME/.bookmark-store ]
+  then
+    echo -n "$HOME/.bookmark-store folder already exists, overwrite? (y/N): "
+    read overwriteStore
+    if [[ "$overwriteStore" == "y" ]]
+    then
+      echo "Removing old directory..."
+      rm -rf $HOME/.bookmark-store
+      echo -n "Enter location for bookmark store (Default: $HOME/.bookmark-store): "
+      read storeDir
+      if [[ "$newLocation" == "" ]]
+      then
+        storeDir=$HOME/.bookmark-store
+      fi
+      mkdir $storeDir
+    fi
+  else
+    echo -n "Enter location for bookmark store (Default: $HOME/.bookmark-store): "
+    read storeDir
+    if [[ "$newLocation" == "" ]]
+    then
+      storeDir=$HOME/.bookmark-store
+    fi
+    mkdir $storeDir
+  fi
+
+  if [ -f $HOME/.bookmark.conf.yaml ]
+  then
+    echo -n "$HOME/.bookmark.conf.yaml already exists, overwrite? (y/N): "
+    read overwriteConfig
+    if [[ "$overwriteConfig" == "y" ]]
+    then
+      rm $HOME/.bookmark.conf.yaml
+      echo "storeDirectory: $storeDir" >> $HOME/.bookmark.conf.yaml
+      
+      os=$(sw_vers -productName)
+      if [[ "$os" == "Mac OS X" ]]
+      then
+        echo "os: macos" >> $HOME/.bookmark.conf.yaml
+      fi
+    fi 
+  else
+    echo "storeDirectory: $storeDir" >> $HOME/.bookmark.conf.yaml
+    os=$(sw_vers -productName)
+    if [[ "$os" == "Mac OS X" ]]
+    then
+      echo "os: macos" >> $HOME/.bookmark.conf.yaml
+    fi
+  fi
+  exit 0
+fi
+
 configFile="$HOME/.bookmark.conf.yaml"
 storeDirectory=$(grep "storeDirectory" $configFile | awk -F": " '{ print $2 }')
 os=$(grep "os" $configFile | awk -F": " '{ print $2 }')
