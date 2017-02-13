@@ -103,7 +103,7 @@ do
     read newBrowser
     if [[ "newBrowser" != "" ]]
     then
-      echo "browser: $newBrowser" >> $currentPath/$newBookmark
+      echo -e "browser:\n  $os: $newBrowser" >> $currentPath/$newBookmark
     fi
     if [[ $passInstalled -eq 1 ]]
     then
@@ -111,10 +111,9 @@ do
       read newPass
       if [[ "$newPass" != "" ]]
       then
-        echo "pass: $newPass" >> $cureentPath/$newBookmark
+        echo "pass: $newPass" >> $currentPath/$newBookmark
       fi
     fi
-    echo -e "$newURL\n$newBrowser\n$newPass" > $currentPath/$newBookmark
     echo "Added $currentPath/$newBookmark to the bookmark store"
     exit 0
     ;;
