@@ -55,20 +55,22 @@ then
   exit 0
 fi
 
+# Presets
 configFile="$HOME/.bookmark.conf.yaml"
 storeDirectory=$(grep "storeDirectory" $configFile | awk -F": " '{ print $2 }')
 os=$(grep "os" $configFile | awk -F": " '{ print $2 }')
-
 open=0
 view=0
 list=0
 pass=0
 
-while getopts b:lopv o
+while getopts b:hlopv o
 do
   case "$o" in
     b) bookmark="$storeDirectory/${OPTARG}.yaml"
     url=$(grep "url" $bookmark | awk -F": " '{ print $2 }')
+    ;;
+    h) echo -e "bookmark, version 0.1\n\nusage: bookmark [-b bookmark path] [-hlopv]\n\n  h : Displays this help section\n  l : Shows a tree of all bookmarks in the store.\n  o : Open the bookmark in the browser specified in the bookmakr YAML file or the default browser if that is not set.\n  p : If pass is installed and the path to the pass file for this site is in the bookmark YAML file, this will copy the password.\n  v : View the url\n" 
     ;;
     l) list=1;;
     o) open=1;;
