@@ -37,20 +37,7 @@ then
     then
       rm $HOME/.bookmark.conf.yaml
       echo "storeDirectory: $storeDir" >> $HOME/.bookmark.conf.yaml
-      
-      os=$(sw_vers -productName)
-      if [[ "$os" == "Mac OS X" ]]
-      then
-        echo "os: macos" >> $HOME/.bookmark.conf.yaml
-      fi
     fi 
-  else
-    echo "storeDirectory: $storeDir" >> $HOME/.bookmark.conf.yaml
-    os=$(sw_vers -productName)
-    if [[ "$os" == "Mac OS X" ]]
-    then
-      echo "os: macos" >> $HOME/.bookmark.conf.yaml
-    fi
   fi
   exit 0
 fi
@@ -58,7 +45,6 @@ fi
 # Presets
 configFile="$HOME/.bookmark.conf.yaml"
 storeDirectory=$(grep "storeDirectory" $configFile | awk -F": " '{ print $2 }')
-os=$(grep "os" $configFile | awk -F": " '{ print $2 }')
 open=0
 view=0
 list=0
@@ -129,17 +115,18 @@ done
 # Opens URL in browser specified in the config file or in the bookmark file
 if [[ $open -eq 1 ]]
 then
-  browser=$(sed -n -e "/browser/,/  $os/p" $bookmark | grep "$os" | awk -F ": " '{ print $2 }')
-# browser=$(grep "browser" $bookmark | awk -F": " '{ print $2 }')
+  browser=$(sed -n -e "/browser/,/  $(hostname -f)/p" $bookmark | grep "$(hostname -f)" | awk -F": " '{ print $2 }' | sed "s/'//g")
   # Check to use default browser
   if [ "$browser" == "" ]
   then
-    browser=$(grep "browser" $configFile | awk -F": " '{ print $2 }')
+    browser=$(sed -n -e "/browser/,/  $(hostname -f)/p" $configFile | grep "$(hostname -f)" | awk -F": " '{ print $2 }' | sed "s/'//g")
   fi
   
-  if [[ "$os" == "macos" ]]
+  if [[ "$(uname)" == "Darwin" ]]
   then
     open -a "$browser" $url 
+  elif [[ "$(uname)" == "Linux" ]
+   $browser "$url" 
   fi
 fi
 
