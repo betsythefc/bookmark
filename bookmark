@@ -115,11 +115,11 @@ done
 # Opens URL in browser specified in the config file or in the bookmark file
 if [[ $open -eq 1 ]]
 then
-  browser=$(sed -n -e "/browser/,/  $(hostname -f)/p" $bookmark | grep "$(hostname -f)" | awk -F ": " '{ print $2 }' | sed "s/'//g")
+  browser=$(sed -n -e "/browser/,/  $(hostname -f)/p" $bookmark | grep "$(hostname -f)" | awk -F": " '{ print $2 }' | sed "s/'//g")
   # Check to use default browser
   if [ "$browser" == "" ]
   then
-    browser=$(sed -n -e "/browser/,/  $(hostname -f)/p" $configFile | grep "$(hostname -f)" | awk -F ": " '{ print $2 }' | sed "s/'//g")
+    browser=$(sed -n -e "/browser/,/  $(hostname -f)/p" $configFile | grep "$(hostname -f)" | awk -F": " '{ print $2 }' | sed "s/'//g")
   fi
   
   if [[ "$(uname)" == "Darwin" ]]
