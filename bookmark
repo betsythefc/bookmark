@@ -125,8 +125,9 @@ then
   if [[ "$(uname)" == "Darwin" ]]
   then
     open -a "$browser" $url 
-  elif [[ "$(uname)" == "Linux" ]
-   $browser "$url" 
+  elif [[ "$(uname)" == "Linux" ]]
+  then
+    exec "$browser" "$url" 
   fi
 fi
 
