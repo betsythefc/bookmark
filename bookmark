@@ -89,7 +89,7 @@ do
     read newBrowser
     if [[ "newBrowser" != "" ]]
     then
-      echo -e "browser:\n  $os: $newBrowser" >> $currentPath/$newBookmark
+      echo -e "browser:\n  $(hostname -f): $newBrowser" >> $currentPath/$newBookmark
     fi
     if [[ $passInstalled -eq 1 ]]
     then
