@@ -68,7 +68,7 @@ else
   fi
 fi
 
-while getopts b:c:hopv o
+while getopts b:c:ehopv o
 do
   case "$o" in
     b) bookmark="$storeDirectory/${OPTARG}.yaml"
@@ -108,7 +108,10 @@ do
     echo "Added $currentPath/$newBookmark to the bookmark store"
     exit 0
     ;;
-    h) echo -e "bookmark, version 0.2\n\nusage: bookmark [-b|c bookmark path] [-hlopv]\n\n  b : Path of bookmark for use\n  c : Creates a new bookmark\n  h : Displays this help section\n  l : Shows a tree of all bookmarks in the store.\n  o : Open the bookmark in the browser specified in the bookmakr YAML file or the default browser if that is not set.\n  p : If pass is installed and the path to the pass file for this site is in the bookmark YAML file, this will copy the password.\n  v : View the url\n" 
+    e) vi $bookmark
+    exit 0
+    ;;
+    h) echo -e "bookmark, version 0.2\n\nusage: bookmark [-b|c bookmark path] [-ehlopv]\n\n  b : Path of bookmark for use.\n  c : Creates a new bookmark.\n  e : Opens specified bookmark in vi.\n  h : Displays this help section.\n  l : Shows a tree of all bookmarks in the store.\n  o : Open the bookmark in the browser specified in the bookmakr YAML file or the default browser if that is not set.\n  p : If pass is installed and the path to the pass file for this site is in the bookmark YAML file, this will copy the password.\n  v : View the url.\n" 
     ;;
     o) open=1;;
     p) pass=1;;
