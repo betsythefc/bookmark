@@ -1,8 +1,17 @@
 #!/bin/bash
 
+# Presets
+configFile="$HOME/.bookmark.conf.yaml"
+storeDirectory=$(grep "storeDirectory" $configFile | awk -F": " '{ print $2 }')
+open=0
+view=0
+list=0
+pass=0
+
 # Setup bookmark folder and config file
 if [[ "$1" == "init" ]]
 then
+  ## Create a new bookmark store and config
   if [ -d $HOME/.bookmark-store ]
   then
     echo -n "$HOME/.bookmark-store folder already exists, overwrite? (y/N): "
@@ -40,15 +49,11 @@ then
     fi 
   fi
   exit 0
+elif [[ "$1" == "" ]]
+then
+  ## Default action to show bookmark tree
+  tree $storeDirectory | sed "s/.yaml//g" | sed '$ d' | sed '$ d'
 fi
-
-# Presets
-configFile="$HOME/.bookmark.conf.yaml"
-storeDirectory=$(grep "storeDirectory" $configFile | awk -F": " '{ print $2 }')
-open=0
-view=0
-list=0
-pass=0
 
 # Check if pass is available
 if [[ "$(grep pass $configFile | awk -F": " '{ print $2 }')" == "installed" ]]
@@ -63,7 +68,7 @@ else
   fi
 fi
 
-while getopts b:c:hlopv o
+while getopts b:c:hopv o
 do
   case "$o" in
     b) bookmark="$storeDirectory/${OPTARG}.yaml"
@@ -105,7 +110,6 @@ do
     ;;
     h) echo -e "bookmark, version 0.2\n\nusage: bookmark [-b|c bookmark path] [-hlopv]\n\n  b : Path of bookmark for use\n  c : Creates a new bookmark\n  h : Displays this help section\n  l : Shows a tree of all bookmarks in the store.\n  o : Open the bookmark in the browser specified in the bookmakr YAML file or the default browser if that is not set.\n  p : If pass is installed and the path to the pass file for this site is in the bookmark YAML file, this will copy the password.\n  v : View the url\n" 
     ;;
-    l) list=1;;
     o) open=1;;
     p) pass=1;;
     v) view=1;;
@@ -146,9 +150,4 @@ then
   else
     pass -c "$password"
   fi
-fi
-
-if [[ $list -eq 1 ]]
-then
-  tree $storeDirectory | sed "s/.yaml//g" | sed '$ d' | sed '$ d'
 fi
