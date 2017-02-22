@@ -52,7 +52,7 @@ then
 elif [[ "$1" == "" ]]
 then
   ## Default action to show bookmark tree
-  tree -C $storeDirectory | sed "s/.yaml//g" | sed '$ d' | sed '$ d' | sed '1 d' | sed "s/^└──//" | sed "s/^   //"
+  tree -C $storeDirectory | sed "s/.yaml//g" | sed '$ d' | sed '$ d' | sed '1 d' | sed "s/^└──//" | sed "s/^├──//" | sed "s/^│  //" | sed "s/^   //"
 fi
 
 # Check if pass is available
